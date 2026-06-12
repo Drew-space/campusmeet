@@ -6,6 +6,7 @@ export const join = mutation({
     userId: v.string(),
     clerkId: v.string(),
     name: v.string(),
+    imageUrl: v.optional(v.string()),
     location: v.string(),
   },
   handler: async (ctx, args) => {
@@ -20,6 +21,7 @@ export const join = mutation({
       userId: args.userId,
       clerkId: args.clerkId,
       name: args.name,
+      imageUrl: args.imageUrl,
       location: args.location,
       joinedAt: Date.now(),
     });

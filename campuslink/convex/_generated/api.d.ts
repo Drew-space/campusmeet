@@ -8,6 +8,7 @@
  * @module
  */
 
+import type * as pendingMatches from "../pendingMatches.js";
 import type * as sessions from "../sessions.js";
 import type * as waitingPool from "../waitingPool.js";
 
@@ -18,6 +19,7 @@ import type {
 } from "convex/server";
 
 declare const fullApi: ApiFromModules<{
+  pendingMatches: typeof pendingMatches;
   sessions: typeof sessions;
   waitingPool: typeof waitingPool;
 }>;

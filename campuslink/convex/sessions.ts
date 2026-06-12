@@ -125,3 +125,48 @@ export const endAllActive = mutation({
     return `Ended ${all.length} sessions`;
   },
 });
+
+export const clearOnMount = mutation({
+  args: { userId: v.string() },
+  handler: async (ctx, args) => {
+    // End all active sessions for this user
+    const asA = await ctx.db
+      .query("sessions")
+      .withIndex("by_userA", (q) => q.eq("userAId", args.userId))
+      .filter((q) => q.eq(q.field("status"), "active"))
+      .collect();
+    const asB = await ctx.db
+      .query("sessions")
+      .withIndex("by_userB", (q) => q.eq("userBId", args.userId))
+      .filter((q) => q.eq(q.field("status"), "active"))
+      .collect();
+    for (const s of [...asA, ...asB]) {
+      await ctx.db.patch(s._id, { status: "ended" });
+    }
+
+    // Also clear any pending matches
+    const pendingAsA = await ctx.db
+      .query("pendingMatches")
+      .withIndex("by_userA", (q) => q.eq("userAId", args.userId))
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("status"), "pending"),
+          q.eq(q.field("status"), "accepted"),
+        ),
+      )
+      .collect();
+    const pendingAsB = await ctx.db
+      .query("pendingMatches")
+      .withIndex("by_userB", (q) => q.eq("userBId", args.userId))
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("status"), "pending"),
+          q.eq(q.field("status"), "accepted"),
+        ),
+      )
+      .collect();
+    for (const m of [...pendingAsA, ...pendingAsB]) {
+      await ctx.db.patch(m._id, { status: "declined" });
+    }
+  },
+});
