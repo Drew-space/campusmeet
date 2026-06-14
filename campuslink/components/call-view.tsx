@@ -436,13 +436,25 @@ export function CallView({
       // Join the call
       await _call.join({ create: true });
 
-      // Enable camera and mic AFTER joining
       try {
         await _call.camera.enable();
+      } catch {
+        console.log("Camera not available");
+      }
+
+      try {
         await _call.microphone.enable();
       } catch {
-        // permissions denied — call still works
+        console.log("Mic not available");
       }
+
+      // Enable camera and mic AFTER joining
+      // try {
+      //   await _call.camera.enable();
+      //   await _call.microphone.enable();
+      // } catch {
+      //   // permissions denied — call still works
+      // }
 
       setClient(_client);
       setCall(_call);
