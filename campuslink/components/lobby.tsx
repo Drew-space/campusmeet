@@ -1,6 +1,6 @@
 "use client";
 
-import { UserButton, useUser } from "@clerk/nextjs";
+import { UserButton, useUser, SignInButton } from "@clerk/nextjs";
 import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { useMatchmaking } from "@/hooks/use-matchmaking";
@@ -107,7 +107,7 @@ export function Lobby() {
         <span className="text-white font-medium text-[15px] tracking-tight">
           campus<span className="text-[#4B7BF5]">link</span>
         </span>
-        <div className="flex items-center gap-3">
+        {/* <div className="flex items-center gap-3">
           <span className="text-xs text-white/40">
             <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 mb-px" />
             {onlineCount} online
@@ -116,6 +116,26 @@ export function Lobby() {
             {username}
           </span>
           <UserButton />
+        </div> */}
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-white/40">
+            <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 mb-px" />
+            {onlineCount} online
+          </span>
+          {user ? (
+            <>
+              <span className="text-xs text-white/50 border border-white/10 bg-white/[0.04] rounded-full px-3 py-1">
+                {username}
+              </span>
+              <UserButton />
+            </>
+          ) : (
+            <SignInButton mode="modal" fallbackRedirectUrl="/">
+              <button className="text-xs text-white/50 border border-white/10 bg-white/[0.04] rounded-full px-3 py-1 hover:bg-white/[0.08] transition-colors cursor-pointer">
+                Sign in
+              </button>
+            </SignInButton>
+          )}
         </div>
       </nav>
 
@@ -164,12 +184,20 @@ export function Lobby() {
           </button>
         </div>
 
-        <button
-          onClick={startMatching}
-          className="w-full max-w-sm bg-[#4B7BF5] hover:bg-[#3a6ae0] active:scale-[0.98] text-white font-medium text-[15px] rounded-xl py-4 transition-all duration-150 tracking-tight"
-        >
-          Start matching
-        </button>
+        {user ? (
+          <button
+            onClick={startMatching}
+            className="w-full max-w-sm bg-[#4B7BF5] hover:bg-[#3a6ae0] active:scale-[0.98] text-white font-medium text-[15px] rounded-xl py-4 transition-all duration-150 tracking-tight"
+          >
+            Start matching
+          </button>
+        ) : (
+          <SignInButton mode="modal" fallbackRedirectUrl="/">
+            <button className="w-full max-w-sm bg-[#4B7BF5] hover:bg-[#3a6ae0] active:scale-[0.98] text-white font-medium text-[15px] rounded-xl py-4 transition-all duration-150 tracking-tight">
+              Start matching
+            </button>
+          </SignInButton>
+        )}
       </div>
 
       <div className="flex border-t border-white/[0.06]">
