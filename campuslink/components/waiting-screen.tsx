@@ -134,7 +134,7 @@ export function WaitingScreen({
         </button>
       </div>
 
-      <div className="relative z-10 flex border-t border-white/[0.06]">
+      {/* <div className="relative z-10 flex border-t border-white/[0.06]">
         {["explore", "profile", "settings"].map((tab, i) => (
           <button
             key={tab}
@@ -145,7 +145,7 @@ export function WaitingScreen({
             {tab}
           </button>
         ))}
-      </div>
+      </div> */}
     </div>
   );
 }
