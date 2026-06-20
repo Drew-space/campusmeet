@@ -584,7 +584,7 @@ export function Lobby() {
           <h1 className="text-4xl font-medium text-white tracking-tight leading-tight">
             Meet students
             <br />
-            <span className="text-[#6C5CE7]">around the campuses</span>
+            <span className="text-[#6C5CE7]">around the campus</span>
           </h1>
           <p className="text-white/40 text-sm leading-relaxed max-w-xs mx-auto">
             One tap connects you to student, around the campus. No profiles, no

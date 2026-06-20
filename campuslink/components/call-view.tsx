@@ -488,6 +488,273 @@
 //   );
 // }
 
+// "use client";
+
+// import { useEffect, useRef, useState } from "react";
+// import {
+//   StreamVideo,
+//   StreamVideoClient,
+//   StreamCall,
+//   useCall,
+//   useCallStateHooks,
+//   ParticipantView,
+// } from "@stream-io/video-react-sdk";
+// import {
+//   Mic,
+//   MicOff,
+//   Video,
+//   VideoOff,
+//   PhoneOff,
+//   SkipForward,
+// } from "lucide-react";
+
+// interface CallViewProps {
+//   callId: string;
+//   token: string;
+//   userId: string;
+//   username: string;
+//   onNext: () => void;
+//   onEnd: () => void;
+// }
+
+// function CallUI({ onNext, onEnd }: { onNext: () => void; onEnd: () => void }) {
+//   const call = useCall();
+//   const {
+//     useMicrophoneState,
+//     useCameraState,
+//     useLocalParticipant,
+//     useRemoteParticipants,
+//   } = useCallStateHooks();
+//   const { isMute: isMicMuted, microphone } = useMicrophoneState();
+//   const { isMute: isCamMuted, camera } = useCameraState();
+//   const localParticipant = useLocalParticipant();
+//   const remoteParticipants = useRemoteParticipants();
+//   const remoteParticipant = remoteParticipants[0];
+//   const [secs, setSecs] = useState(0);
+//   // false = remote is full-screen, local is the PiP (default)
+//   // true  = local is full-screen, remote is the PiP
+//   const [swapped, setSwapped] = useState(false);
+
+//   useEffect(() => {
+//     const t = setInterval(() => setSecs((s) => s + 1), 1000);
+//     return () => clearInterval(t);
+//   }, []);
+
+//   const fmt = (s: number) =>
+//     `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+
+//   const mainParticipant = swapped ? localParticipant : remoteParticipant;
+//   const pipParticipant = swapped ? remoteParticipant : localParticipant;
+//   const pipLabel = swapped
+//     ? remoteParticipant?.name || remoteParticipant?.userId || "Student"
+//     : "You";
+
+//   return (
+//     <div className="relative min-h-screen bg-[#0F0E17] flex flex-col overflow-hidden">
+//       {/* ambient gradient glow, matches the lobby treatment */}
+//       <div className="pointer-events-none absolute inset-0 overflow-hidden">
+//         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-[#6C5CE7]/15 blur-[100px]" />
+//         <div className="absolute top-1/3 -right-24 w-[320px] h-[320px] rounded-full bg-[#6C5CE7]/10 blur-[90px]" />
+//       </div>
+
+//       <nav className="relative z-10 flex items-center justify-between px-5 py-3 border-b border-white/[0.06] flex-shrink-0">
+//         <span className="text-white font-medium text-[15px] tracking-tight">
+//           campus<span className="text-[#6C5CE7]">link</span>
+//         </span>
+//         <div className="flex items-center gap-2">
+//           <span className="text-xs text-white/30">{fmt(secs)}</span>
+//           <span className="text-xs text-emerald-400/80 border border-emerald-400/30 bg-emerald-400/[0.06] rounded-full px-3 py-1">
+//             ● live
+//           </span>
+//         </div>
+//       </nav>
+
+//       <div className="relative z-10 flex-1 relative bg-[#0e0e0e] overflow-hidden">
+//         {/* Main — full screen, swaps between remote and local */}
+//         <div className="absolute inset-0">
+//           {mainParticipant ? (
+//             <ParticipantView
+//               participant={mainParticipant}
+//               className="w-full h-full"
+//             />
+//           ) : (
+//             <div className="w-full h-full flex flex-col items-center justify-center gap-3">
+//               <div className="w-16 h-16 rounded-full bg-[#6C5CE7]/15 border border-[#6C5CE7]/30 flex items-center justify-center">
+//                 <div className="w-3 h-3 rounded-full bg-[#6C5CE7] animate-pulse" />
+//               </div>
+//               <p className="text-white/30 text-sm">
+//                 Waiting for the other person…
+//               </p>
+//             </div>
+//           )}
+//         </div>
+
+//         {/* Main name tag — only meaningful when remote is the main view */}
+//         {mainParticipant && !swapped && remoteParticipant && (
+//           <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm rounded-lg px-3 py-1.5">
+//             <p className="text-white text-xs font-medium">
+//               {remoteParticipant.name || remoteParticipant.userId}
+//             </p>
+//           </div>
+//         )}
+//         {mainParticipant && swapped && (
+//           <div className="absolute bottom-4 left-4 bg-black/50 backdrop-blur-sm rounded-lg px-3 py-1.5">
+//             <p className="text-white text-xs font-medium">You</p>
+//           </div>
+//         )}
+
+//         {/* PiP — tap to swap with the main view */}
+//         {pipParticipant && (
+//           <button
+//             onClick={() => setSwapped((s) => !s)}
+//             aria-label="Swap main and picture-in-picture view"
+//             className="absolute top-4 right-4 w-28 h-36 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl bg-[#1a1a1a] cursor-pointer transition-transform active:scale-[0.96]"
+//           >
+//             <ParticipantView
+//               participant={pipParticipant}
+//               className="w-full h-full"
+//             />
+//             <div className="absolute bottom-1.5 left-0 right-0 flex justify-center">
+//               <span className="text-[10px] text-white/60 bg-black/40 rounded px-1.5 py-0.5">
+//                 {pipLabel}
+//               </span>
+//             </div>
+//           </button>
+//         )}
+//       </div>
+
+//       {/* Controls */}
+//       <div className="relative z-10 bg-[#0d0d0d] border-t border-white/[0.06] px-6 py-4 flex items-center justify-center gap-3">
+//         <button
+//           onClick={() =>
+//             isMicMuted ? microphone.enable() : microphone.disable()
+//           }
+//           className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all flex-shrink-0 ${
+//             isMicMuted
+//               ? "bg-red-500/15 border-red-500/30 text-red-400"
+//               : "bg-white/[0.06] border-white/10 text-white/70 hover:bg-white/10"
+//           }`}
+//         >
+//           {isMicMuted ? <MicOff size={18} /> : <Mic size={18} />}
+//         </button>
+
+//         <button
+//           onClick={() => (isCamMuted ? camera.enable() : camera.disable())}
+//           className={`w-11 h-11 rounded-xl flex items-center justify-center border transition-all flex-shrink-0 ${
+//             isCamMuted
+//               ? "bg-red-500/15 border-red-500/30 text-red-400"
+//               : "bg-white/[0.06] border-white/10 text-white/70 hover:bg-white/10"
+//           }`}
+//         >
+//           {isCamMuted ? <VideoOff size={18} /> : <Video size={18} />}
+//         </button>
+
+//         <button
+//           onClick={onNext}
+//           className="bg-[#6C5CE7] hover:bg-[#5b4cd6] active:scale-[0.98] text-white font-medium text-sm rounded-xl px-8 py-3 flex items-center gap-2 transition-all flex-shrink-0"
+//         >
+//           <SkipForward size={16} />
+//           Next
+//         </button>
+
+//         <button
+//           onClick={async () => {
+//             await call?.leave();
+//             onEnd();
+//           }}
+//           className="w-11 h-11 rounded-xl flex items-center justify-center bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition-all flex-shrink-0"
+//         >
+//           <PhoneOff size={18} />
+//         </button>
+//       </div>
+//     </div>
+//   );
+// }
+
+// export function CallView({
+//   callId,
+//   token,
+//   userId,
+//   username,
+//   onNext,
+//   onEnd,
+// }: CallViewProps) {
+//   const [client, setClient] = useState<StreamVideoClient | null>(null);
+//   const [call, setCall] = useState<ReturnType<
+//     StreamVideoClient["call"]
+//   > | null>(null);
+//   const clientRef = useRef<StreamVideoClient | null>(null);
+//   const callRef = useRef<ReturnType<StreamVideoClient["call"]> | null>(null);
+//   const leftRef = useRef(false);
+
+//   useEffect(() => {
+//     leftRef.current = false;
+
+//     const setup = async () => {
+//       const _client = new StreamVideoClient({
+//         apiKey: process.env.NEXT_PUBLIC_STREAM_API_KEY!,
+//         user: { id: userId, name: username },
+//         token,
+//       });
+
+//       // Connect user first before doing anything else
+//       await _client.connectUser({ id: userId, name: username }, token);
+
+//       const _call = _client.call("default", callId);
+//       clientRef.current = _client;
+//       callRef.current = _call;
+
+//       // Join the call
+//       await _call.join({ create: true });
+
+//       try {
+//         await _call.camera.enable();
+//       } catch {
+//         console.log("Camera not available");
+//       }
+
+//       try {
+//         await _call.microphone.enable();
+//       } catch {
+//         console.log("Mic not available");
+//       }
+
+//       setClient(_client);
+//       setCall(_call);
+//     };
+//     setup().catch(console.error);
+
+//     return () => {
+//       if (!leftRef.current) {
+//         leftRef.current = true;
+//         callRef.current?.leave().catch(() => {});
+//         clientRef.current?.disconnectUser().catch(() => {});
+//       }
+//     };
+//   }, [callId, token, userId, username]);
+
+//   if (!client || !call) {
+//     return (
+//       <div className="relative min-h-screen bg-[#0F0E17] flex flex-col items-center justify-center gap-3 overflow-hidden">
+//         <div className="pointer-events-none absolute inset-0 overflow-hidden">
+//           <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-[#6C5CE7]/20 blur-[100px]" />
+//           <div className="absolute top-1/3 -right-24 w-[320px] h-[320px] rounded-full bg-[#6C5CE7]/15 blur-[90px]" />
+//         </div>
+//         <div className="relative z-10 w-3 h-3 rounded-full bg-[#6C5CE7] animate-pulse" />
+//         <p className="relative z-10 text-white/40 text-sm">Connecting…</p>
+//       </div>
+//     );
+//   }
+
+//   return (
+//     <StreamVideo client={client}>
+//       <StreamCall call={call}>
+//         <CallUI onNext={onNext} onEnd={onEnd} />
+//       </StreamCall>
+//     </StreamVideo>
+//   );
+// }
+
 "use client";
 
 import { useEffect, useRef, useState } from "react";
@@ -550,7 +817,7 @@ function CallUI({ onNext, onEnd }: { onNext: () => void; onEnd: () => void }) {
     : "You";
 
   return (
-    <div className="relative min-h-screen bg-[#0F0E17] flex flex-col overflow-hidden">
+    <div className="relative h-[100dvh] bg-[#0F0E17] flex flex-col overflow-hidden">
       {/* ambient gradient glow, matches the lobby treatment */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-[#6C5CE7]/15 blur-[100px]" />
@@ -569,7 +836,7 @@ function CallUI({ onNext, onEnd }: { onNext: () => void; onEnd: () => void }) {
         </div>
       </nav>
 
-      <div className="relative z-10 flex-1 relative bg-[#0e0e0e] overflow-hidden">
+      <div className="relative z-10 flex-1 min-h-0 bg-[#0e0e0e] overflow-hidden">
         {/* Main — full screen, swaps between remote and local */}
         <div className="absolute inset-0">
           {mainParticipant ? (
@@ -608,7 +875,7 @@ function CallUI({ onNext, onEnd }: { onNext: () => void; onEnd: () => void }) {
           <button
             onClick={() => setSwapped((s) => !s)}
             aria-label="Swap main and picture-in-picture view"
-            className="absolute top-4 right-4 w-28 h-36 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl bg-[#1a1a1a] cursor-pointer transition-transform active:scale-[0.96]"
+            className="absolute top-4 right-4 w-24 h-32 sm:w-28 sm:h-36 rounded-2xl overflow-hidden border-2 border-white/20 shadow-2xl bg-[#1a1a1a] cursor-pointer transition-transform active:scale-[0.96]"
           >
             <ParticipantView
               participant={pipParticipant}
@@ -624,7 +891,7 @@ function CallUI({ onNext, onEnd }: { onNext: () => void; onEnd: () => void }) {
       </div>
 
       {/* Controls */}
-      <div className="relative z-10 bg-[#0d0d0d] border-t border-white/[0.06] px-6 py-4 flex items-center justify-center gap-3">
+      <div className="relative z-10 bg-[#0d0d0d] border-t border-white/[0.06] px-3 sm:px-6 py-3 sm:py-4 flex items-center justify-center gap-2 sm:gap-3 flex-shrink-0">
         <button
           onClick={() =>
             isMicMuted ? microphone.enable() : microphone.disable()
@@ -651,7 +918,7 @@ function CallUI({ onNext, onEnd }: { onNext: () => void; onEnd: () => void }) {
 
         <button
           onClick={onNext}
-          className="bg-[#6C5CE7] hover:bg-[#5b4cd6] active:scale-[0.98] text-white font-medium text-sm rounded-xl px-8 py-3 flex items-center gap-2 transition-all flex-shrink-0"
+          className="bg-[#6C5CE7] hover:bg-[#5b4cd6] active:scale-[0.98] text-white font-medium text-sm rounded-xl px-5 sm:px-8 py-3 flex items-center gap-2 transition-all flex-shrink-0"
         >
           <SkipForward size={16} />
           Next
@@ -662,9 +929,10 @@ function CallUI({ onNext, onEnd }: { onNext: () => void; onEnd: () => void }) {
             await call?.leave();
             onEnd();
           }}
-          className="w-11 h-11 rounded-xl flex items-center justify-center bg-red-500/15 border border-red-500/30 text-red-400 hover:bg-red-500/25 transition-all flex-shrink-0"
+          className="bg-red-500/15 hover:bg-red-500/25 active:scale-[0.98] border border-red-500/30 text-red-400 font-medium text-sm rounded-xl px-4 sm:px-5 py-3 flex items-center gap-2 transition-all flex-shrink-0"
         >
           <PhoneOff size={18} />
+          <span className="hidden sm:inline">End call</span>
         </button>
       </div>
     </div>
@@ -735,7 +1003,7 @@ export function CallView({
 
   if (!client || !call) {
     return (
-      <div className="relative min-h-screen bg-[#0F0E17] flex flex-col items-center justify-center gap-3 overflow-hidden">
+      <div className="relative h-[100dvh] bg-[#0F0E17] flex flex-col items-center justify-center gap-3 overflow-hidden">
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -top-32 left-1/2 -translate-x-1/2 w-[480px] h-[480px] rounded-full bg-[#6C5CE7]/20 blur-[100px]" />
           <div className="absolute top-1/3 -right-24 w-[320px] h-[320px] rounded-full bg-[#6C5CE7]/15 blur-[90px]" />
