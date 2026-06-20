@@ -50,11 +50,22 @@ export async function POST(req: Request) {
       data: {
         created_by_id: userAId,
         members: [{ user_id: userAId }, { user_id: userBId }],
+        // settings_override: {
+        //   recording: { mode: "disabled" },
+        //   video: {
+        //     camera_default_on: true,
+        //     target_resolution: { width: 1280, height: 720 },
+        //   },
+        //   audio: {
+        //     default_device: "speaker",
+        //     noise_cancellation: { mode: "disabled" },
+        //   },
+        // },
         settings_override: {
           recording: { mode: "disabled" },
           video: {
             camera_default_on: true,
-            target_resolution: { width: 1280, height: 720 },
+            target_resolution: { width: 1280, height: 720, bitrate: 2_000_000 },
           },
           audio: {
             default_device: "speaker",
