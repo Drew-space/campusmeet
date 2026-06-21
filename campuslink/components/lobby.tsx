@@ -398,7 +398,7 @@ export function Lobby() {
             Disclaimer:{" "}
           </span>
           <span className="text-[10px] sm:text-[11px] text-white/30">
-            This is in no way affiliated with the school (UNIDEL)
+            This is in no way affiliated with any school
           </span>
         </div>
       </div>
