@@ -339,9 +339,9 @@ export function Lobby() {
         </div>
       </nav>
 
-      <div className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-start sm:justify-center px-6 gap-3 sm:gap-8 pt-4 sm:py-8 pb-3 overflow-y-auto">
-        <div className="text-center space-y-1.5 sm:space-y-3">
-          <h1 className="text-2xl sm:text-4xl font-medium text-white tracking-tight leading-tight">
+      <div className="relative z-10 flex-1 min-h-0 flex flex-col items-center justify-between sm:justify-start px-6 gap-4 sm:gap-6 pt-8 pb-6 overflow-y-auto">
+        <div className="text-center space-y-2 sm:space-y-3 flex-shrink-0">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-medium text-white tracking-tight leading-tight">
             Meet students
             <br />
             <span className="text-[#6C5CE7]">around the campus</span>
@@ -353,8 +353,8 @@ export function Lobby() {
         </div>
 
         {/* hero illustration */}
-        <div className="relative w-[230px] h-[230px] sm:w-[340px] sm:h-[340px] flex items-center justify-center flex-shrink-0">
-          <div className="absolute inset-0 rounded-full bg-[#6C5CE7]/25 blur-[55px] sm:blur-[60px]" />
+        <div className="relative w-[260px] h-[260px] sm:w-[300px] sm:h-[300px] flex items-center justify-center flex-shrink-0">
+          <div className="absolute inset-0 rounded-full bg-[#6C5CE7]/25 blur-[60px] sm:blur-[70px]" />
           <Image
             src="/auth.png"
             alt="Two students on a CampusLink video call"
@@ -365,41 +365,43 @@ export function Lobby() {
           />
         </div>
 
-        {/* feature pills */}
-        <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-center">
-          {FEATURES.map(({ label, icon: Icon }) => (
-            <span
-              key={label}
-              className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs text-white/60"
-            >
-              <Icon className="w-3.5 h-3.5 text-[#6C5CE7]" strokeWidth={2} />
-              {label}
-            </span>
-          ))}
-        </div>
+        <div className="w-full flex flex-col items-center gap-4 sm:gap-5 flex-shrink-0">
+          {/* feature pills */}
+          <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap justify-center">
+            {FEATURES.map(({ label, icon: Icon }) => (
+              <span
+                key={label}
+                className="flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.04] px-2.5 sm:px-3 py-1 sm:py-1.5 text-[11px] sm:text-xs text-white/60"
+              >
+                <Icon className="w-3.5 h-3.5 text-[#6C5CE7]" strokeWidth={2} />
+                {label}
+              </span>
+            ))}
+          </div>
 
-        {user ? (
-          <button
-            onClick={startMatching}
-            className="w-full max-w-sm bg-[#6C5CE7] hover:bg-[#5b4cd6] active:scale-[0.98] text-white font-medium text-sm sm:text-[15px] rounded-xl py-3 sm:py-4 transition-all duration-150 tracking-tight flex-shrink-0"
-          >
-            Start matching
-          </button>
-        ) : (
-          <SignInButton mode="modal" fallbackRedirectUrl="/">
-            <button className="w-full max-w-sm bg-[#6C5CE7] hover:bg-[#5b4cd6] active:scale-[0.98] text-white font-medium text-sm sm:text-[15px] rounded-xl py-3 sm:py-4 transition-all duration-150 tracking-tight flex-shrink-0">
+          {user ? (
+            <button
+              onClick={startMatching}
+              className="w-full max-w-sm bg-[#6C5CE7] hover:bg-[#5b4cd6] active:scale-[0.98] text-white font-medium text-sm sm:text-[15px] rounded-xl py-3 sm:py-4 transition-all duration-150 tracking-tight"
+            >
               Start matching
             </button>
-          </SignInButton>
-        )}
+          ) : (
+            <SignInButton mode="modal" fallbackRedirectUrl="/">
+              <button className="w-full max-w-sm bg-[#6C5CE7] hover:bg-[#5b4cd6] active:scale-[0.98] text-white font-medium text-sm sm:text-[15px] rounded-xl py-3 sm:py-4 transition-all duration-150 tracking-tight">
+                Start matching
+              </button>
+            </SignInButton>
+          )}
 
-        <div className="text-center px-4">
-          <span className="text-[10px] sm:text-[11px] text-white/30">
-            Disclaimer:{" "}
-          </span>
-          <span className="text-[10px] sm:text-[11px] text-white/30">
-            This is in no way affiliated with any school
-          </span>
+          <div className="text-center px-4">
+            <span className="text-[10px] sm:text-[11px] text-white/30">
+              Disclaimer:{" "}
+            </span>
+            <span className="text-[10px] sm:text-[11px] text-white/30">
+              This is in no way affiliated with any school
+            </span>
+          </div>
         </div>
       </div>
     </div>
